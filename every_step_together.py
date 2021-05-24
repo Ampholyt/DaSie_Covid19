@@ -4,10 +4,11 @@ import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 
+
 #laad train and validation data
-train_pd=pd.read_csv('data/preprocessed_train.csv', sep=',')
-valid_pd=pd.read_csv('data/preprocessed_valid.csv', sep=',')
-test_pd=pd.read_csv('data/preprocessed_test.csv', sep=',')
+train_pd=pd.read_csv('data/preprocessed_full_train.csv', sep=',')
+valid_pd=pd.read_csv('data/preprocessed_full_val.csv', sep=',')
+test_pd=pd.read_csv('data/preprocessed_full_test.csv', sep=',')
 
 #create datasets from lgb
 param_readin = {'feature_pre_filter': False}
