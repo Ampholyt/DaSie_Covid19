@@ -1,5 +1,9 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
+import seaborn as sn
+import matplotlib.pyplot as plt
+
+
 
 # data: https://github.com/nshomron/covidpred/tree/master/data
 path = 'C:/Users/victo/Downloads/corona_tested_individuals_ver_00143.csv'
@@ -45,14 +49,21 @@ translations = {
 df = df.replace(translations).astype(int)
 
 # drop all obs where corona result is "other"
-df.drop(df[df.corona_result == 'other'].index, inplace=True)
-
+# df.drop(df[df.corona_result == 'other'].index, inplace=True)
+df = df[df['corona_result'] != 2]
 
 # Split into test, train, validation data
 data_train, data_test = train_test_split(df, test_size=0.2)
 
 # split training data again into training and validation data
 data_train, data_val = train_test_split(data_train, test_size=0.2)
+
+# correlation matrix
+corrMatrix = df.corr()
+sn.heatmap(corrMatrix, annot=True)
+plt.show()
+
+
 
 
 # Save data and category explanations

@@ -4,20 +4,21 @@ import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 
+
 #laad train and validation data
-train_pd=pd.read_csv('data/preprocessed_full_train.csv', sep=',')
-valid_pd=pd.read_csv('data/preprocessed_full_val.csv', sep=',')
-test_pd=pd.read_csv('data/preprocessed_full_test.csv', sep=',')
+train_pd=pd.read_csv('data/preprocessed_github_train.csv', sep=',')
+valid_pd=pd.read_csv('data/preprocessed_github_val.csv', sep=',')
+test_pd=pd.read_csv('data/preprocessed_github_test.csv', sep=',')
 
 train_X = train_pd.drop(labels="corona_result", axis=1)
 valid_X = valid_pd.drop(labels="corona_result", axis=1)
 test_X = test_pd.drop(labels="corona_result", axis=1)
 
 
-for c in train_X.columns:
-    train_X[c] = train_X[c].astype('category')
-    test_X[c] = test_X[c].astype('category')
-    valid_X[c] = valid_X[c].astype('category')
+# for c in train_X.columns:
+#     train_X[c] = train_X[c].astype('category')
+#     test_X[c] = test_X[c].astype('category')
+#     valid_X[c] = valid_X[c].astype('category')
 
 
 print(train_X.dtypes)
