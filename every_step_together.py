@@ -26,8 +26,7 @@ print(test_X.dtypes)
 print(valid_X.dtypes)
 
 #create datasets from lgb
-param_readin = {'feature_pre_filter': False,
-}
+param_readin = {'feature_pre_filter': False}
 
 train_data = lgb.Dataset(train_X, params=param_readin, label=train_pd['corona_result']).construct()
 
@@ -35,38 +34,30 @@ validation_data = lgb.Dataset(valid_X, params=param_readin,  label=valid_pd['cor
 
 #training
 train_param = {'num_leaves': 20,
-    'objective': 'binary',
-    'min_data_in_leaf': 4,
-    'feature_fraction': 0.2,
-    'bagging_fraction': 0.8,
-    'bagging_freq': 5,
-    'learning_rate': 0.05,
-    'verbose': 1,
+               'objective': 'binary',
+               'min_data_in_leaf': 4,
+               'feature_fraction': 0.2,
+               'bagging_fraction': 0.8,
+               'bagging_freq': 5,
+               'learning_rate': 0.05,
+               'verbose': 1,
     }
 #num_boost_round=603
-bst = lgb.train(train_param, train_data, num_boost_round=800, early_stopping_rounds=5, valid_sets=[validation_data])
+bst = lgb.train(train_param, train_data, num_boost_round=604, early_stopping_rounds=5, valid_sets=[validation_data])
 
 #predict
 ypred = bst.predict(train_X)
 print(ypred)
-mask = ypred > 0.5
+
 #validation/testset
 vY = train_pd["corona_result"]
 vX = train_pd.drop(labels="corona_result", axis=1)
 print(vX)
-#confusion matrix
-from sklearn.metrics import confusion_matrix
-cm = confusion_matrix(vY, mask)
-print('\nConfusion matrix\n\n', cm)
-print('\nTrue Positives(TP) = ', cm[0,0])
-print('\nTrue Negatives(TN) = ', cm[1,1])
-print('\nFalse Positives(FP) = ', cm[0,1])
-print('\nFalse Negatives(FN) = ', cm[1,0])
 
 #roc curve:
 import numpy as np
 from sklearn import metrics
-fpr, tpr, thresholds = metrics.roc_curve(vY, mask, pos_label=1)
+fpr, tpr, thresholds = metrics.roc_curve(vY, ypred, pos_label=1)
 
 plt.figure()
 lw = 2
@@ -80,6 +71,22 @@ plt.ylabel('True Positive Rate')
 plt.title('Receiver operating characteristic example')
 plt.legend(loc="lower right")
 plt.show()
+
+
+#
+# #confusion matrix #### redo is broken now --> use threshold from roc curve to create mask
+# mask = ypred < threshold
+# from sklearn.metrics import confusion_matrix
+# cm = confusion_matrix(vY, mask)
+# print('\nConfusion matrix\n\n', cm)
+# print('\nTrue Positives(TP) = ', cm[0,0])
+# print('\nTrue Negatives(TN) = ', cm[1,1])
+# print('\nFalse Positives(FP) = ', cm[0,1])
+# print('\nFalse Negatives(FN) = ', cm[1,0])
+
+
+
+
 
 import shap  # package used to calculate Shap values
 

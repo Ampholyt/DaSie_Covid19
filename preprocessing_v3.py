@@ -1,5 +1,6 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
+import numpy as np
 import seaborn as sn
 import matplotlib.pyplot as plt
 
@@ -21,14 +22,15 @@ df = pd.read_csv(path, low_memory=False)
 
 # drop all obs where data is not binary (mostly missing info)
 df = df[df['corona_result'] != 'other']  # corona result not negative or positive
-df = df[df['cough'] != 'None']
-df = df[df['fever'] != 'None']
-df = df[df['sore_throat'] != 'None']
-df = df[df['shortness_of_breath'] != 'None']
-df = df[df['head_ache'] != 'None']
 df = df[df['gender'] != 'None']
-df = df[df['age_60_and_above'] != 'None']
-# there is no way this is a good way of doing this maybe improve later
+# this reproduces the exact data from the paper
+# replace 'None' with np.nan so lgbm can work with it
+df['cough'].replace('None', np.nan, inplace=True)
+df['fever'].replace('None', np.nan, inplace=True)
+df['sore_throat'].replace('None', np.nan, inplace=True)
+df['shortness_of_breath'].replace('None', np.nan, inplace=True)
+df['head_ache'].replace('None', np.nan, inplace=True)
+df['age_60_and_above'].replace('None', np.nan, inplace=True)
 
 # replace categories with numbers
 
@@ -55,6 +57,8 @@ translations = {
 }
 
 df = df.replace(translations)
+df.columns = ["test_date", "Cough", "Fever", "Sore_throat", "Shortness_of_breath",
+              "Headache", "corona_result", "Age_60+", "Male", "Contact_with_confirmed"]
 
 # Training data: 22.03.20 - 31.03.20 # n=51.831, corona=4769
 # Test data:     01.04.20 - 07.04.20 # n=47.401, corona=3624
@@ -66,11 +70,19 @@ test_df = df[((df['test_date'] >= '2020-04-01') & (df['test_date'] <= '2020-04-0
 test_df.drop(['test_date'], axis=1, inplace=True)
 train_df.drop(['test_date'], axis=1, inplace=True)
 
+test_df = test_df.astype(bool)
+train_df = test_df.astype(bool)
+
+print(test_df.dtypes)
+
+
 # Numbers are not exactly the same but very similar to the ones used in the paper.
 print(f"Train n = {len(train_df)}, corona: {sum(train_df['corona_result'] == 1)}")
 print(train_df.nunique())
 print(f"Test n = {len(test_df)}, corona: {sum(test_df['corona_result'] == 1)}")
 print(test_df.nunique())
+
+
 
 
 # split training data into training and validation data
