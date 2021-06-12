@@ -12,7 +12,7 @@ Replicate dataset used in the paper
 # data: https://github.com/nshomron/covidpred/tree/master/data
 
 # raw Data from GitHub:
-path = 'C:/Users/victo/Downloads/corona_tested_individuals_ver_006.english.csv'
+path = 'data/corona_tested_individuals_ver_006.english.csv'
 
 
 # read data
