@@ -70,8 +70,8 @@ test_df = df[((df['test_date'] >= '2020-04-01') & (df['test_date'] <= '2020-04-0
 test_df.drop(['test_date'], axis=1, inplace=True)
 train_df.drop(['test_date'], axis=1, inplace=True)
 
-test_df = test_df.astype(bool)
-train_df = test_df.astype(bool)
+test_df = test_df.astype(float)
+train_df = test_df.astype(float)
 
 print(test_df.dtypes)
 
