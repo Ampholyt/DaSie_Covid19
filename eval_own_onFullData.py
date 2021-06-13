@@ -8,10 +8,10 @@ from sklearn import metrics
 import shap  # package used to calculate shap values
 
 '''
-Evaluate the paper's model
+Evaluate the own model on the full Dataset
 '''
 
-fileprefix = 'data/preprocessed_github_'
+fileprefix = 'data/preprocessed_full_'
 
 # load train and validation data
 train_pd = pd.read_csv(fileprefix + 'train.csv', sep=',')
@@ -27,9 +27,22 @@ test_X = test_pd.drop(labels="corona_result", axis=1)
 # print(test_X.dtypes)
 # print(valid_X.dtypes)
 
-
-# load model from file
-bst = lgb.Booster(model_file='models/lgbm_model_all_features.txt')
+# training:
+param_readin = {'feature_pre_filter': False} # why is this needed? (https://lightgbm.readthedocs.io/en/latest/Parameters.html search for feature_pre_filter)
+train_data = lgb.Dataset(train_X, label=train_pd['corona_result'])
+val_data = lgb.Dataset(valid_X, params=param_readin,  label=valid_pd['corona_result'], reference=train_data)
+# train model
+train_param = {'num_leaves': 20,
+               'objective': 'binary',
+               'min_data_in_leaf': 4,
+               'feature_fraction': 0.2,
+               'bagging_fraction': 0.8,
+               'bagging_freq': 5,
+               'learning_rate': 0.05,
+               'verbose': 1,
+    }
+#num_boost_round=603
+bst = lgb.train(train_param, train_data, num_boost_round=604, early_stopping_rounds=5, valid_sets=[val_data])
 
 #predict
 ypred = bst.predict(test_X)
