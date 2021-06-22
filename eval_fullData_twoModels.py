@@ -34,23 +34,27 @@ test_X = test_pd.drop(labels="corona_result", axis=1)
 # load model from file
 bst = lgb.Booster(model_file='models/lgbm_model_all_features.txt')
 #  OR
-# # Train our own model
+# Train our own model
 # # training:
 # param_readin = {'feature_pre_filter': False} # why is this needed? (https://lightgbm.readthedocs.io/en/latest/Parameters.html search for feature_pre_filter)
 # train_data = lgb.Dataset(train_X, label=train_pd['corona_result'])
 # val_data = lgb.Dataset(valid_X, params=param_readin,  label=valid_pd['corona_result'], reference=train_data)
 # # train model
-# train_param = {'num_leaves': 20,
+# train_param = {'num_leaves': 34, #34.24
 #                'objective': 'binary',
-#                'min_data_in_leaf': 4,
-#                'feature_fraction': 0.2,
-#                'bagging_fraction': 0.8,
+#                'min_data_in_leaf': 54, #54.56
+#                'min_sum_hessian_in_leaf': 40, #39.9
+#                'feature_fraction': 0.6758,
+#                'bagging_fraction': 0.9081,
 #                'bagging_freq': 5,
-#                'learning_rate': 0.05,
+#                'subsample': 0.02567,
+#                'learning_rate': 0.4616,
+#                'max_bin': 88, #88.32
+#                'max_depth': 28, #28.23
 #                'verbose': 1,
 #     }
 # #num_boost_round=603
-# bst = lgb.train(train_param, train_data, num_boost_round=604, early_stopping_rounds=5, valid_sets=[val_data])
+# bst = lgb.train(train_param, train_data, num_boost_round=604, early_stopping_rounds=50, valid_sets=[val_data])
 
 #predict
 ypred = bst.predict(test_X)
@@ -82,15 +86,15 @@ plt.show()
 
 #########AUC#############
 AUC = metrics.auc(fpr,tpr)
-print("The AUC is {}".format(AUC))
+print("The AUC is {}".format(AUC)) #0.8317182822094226 (603 rounds (break at 62)) 0.8314688168533265 (20 rounds)
 
 ########auPRC############
 precision, recall, thresholds = metrics.precision_recall_curve(vY, ypred, pos_label=1)
 plt.figure()
 lw = 2
 plt.plot(recall, precision, color='darkblue',
-         lw=lw, label='ROC curve')
-plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
+         lw=lw, label='Precision Recall Curve')
+
 plt.xlim([0.0, 1.0])
 plt.ylim([0.0, 1.05])
 plt.xlabel('Recall')

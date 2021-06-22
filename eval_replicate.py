@@ -68,8 +68,8 @@ precision, recall, thresholds = metrics.precision_recall_curve(vY, ypred, pos_la
 plt.figure()
 lw = 2
 plt.plot(recall, precision, color='darkblue',
-         lw=lw, label='ROC curve')
-plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
+         lw=lw, label='Precision Recall Curve')
+
 plt.xlim([0.0, 1.0])
 plt.ylim([0.0, 1.05])
 plt.xlabel('Recall')
@@ -80,7 +80,6 @@ plt.show()
 
 
 #######SHAP##############
-
 shaping = input("Do you want to calculate the shap values?")
 if (shaping == 'yes' or shaping == 'y'):
     # fix?

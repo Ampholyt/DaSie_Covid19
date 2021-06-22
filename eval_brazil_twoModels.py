@@ -50,7 +50,7 @@ bst = lgb.Booster(model_file=dataModel)
 #                'learning_rate': 0.05,
 #                'verbose': 1,
 #     }
-# #num_boost_round=603
+#num_boost_round=603
 # bst = lgb.train(train_param, train_data, num_boost_round=604, early_stopping_rounds=5, valid_sets=[val_data])
 
 #predict
@@ -90,8 +90,8 @@ precision, recall, thresholds = metrics.precision_recall_curve(vY, ypred, pos_la
 plt.figure()
 lw = 2
 plt.plot(recall, precision, color='darkblue',
-         lw=lw, label='ROC curve')
-plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
+         lw=lw, label='Precision Recall Curve')
+
 plt.xlim([0.0, 1.0])
 plt.ylim([0.0, 1.05])
 plt.xlabel('Recall')
