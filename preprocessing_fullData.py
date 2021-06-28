@@ -69,28 +69,43 @@ df.columns = ["test_date", "Cough", "Fever", "Sore_throat", "Shortness_of_breath
 Different usecases for this data set:
     1 - Evaluate model from the paper
     2 - Train and test new model
-
-Comment out the case you don't need currently 
+    3 - Train and Test models on single months
+Comment out the case you don't need currently
 '''
 outfile_prefix = 'preprocessed_full_'
 
 # 1 - Evaluate model from the paper #####################################################
 # all data can be used for testing only excluding the data that was originally used for
 # training/validation (week 2020-03-22 - 2020-03-31)
-
-test_zoabi_df = df[df['test_date'] >= '2020-04-01']
-test_zoabi_df = test_zoabi_df.drop(['test_date'], axis=1).astype(float)
-
-test_zoabi_df.to_csv(pathprefix + 'data/' + outfile_prefix + 'test_zoabi.csv', index=False)
+#
+# test_zoabi_df = df[df['test_date'] >= '2020-04-01']
+# test_zoabi_df = test_zoabi_df.drop(['test_date'], axis=1).astype(float)
+#
+# test_zoabi_df.to_csv(pathprefix + 'data/' + outfile_prefix + 'test_zoabi.csv', index=False)
 
 # 2 - Train and Test new model ##########################################################
 # data is randomly split 4:1 into training and testing sets
 # training set itself is split 4:1 into training and validation sets
-df = df.drop(['test_date'], axis=1).astype(float)
 
-train_df, test_df = train_test_split(df, test_size=0.2, random_state=123)
-train_df, val_df = train_test_split(train_df, test_size=0.2, random_state=123)
+# 3 - Train and Test models on single months ############################################
+# split data by months
+# data is randomly split 4:1 into training and testing sets
+# training set itself is split 4:1 into training and validation sets
+print(df['test_date'])
+df['test_date'] = pd.to_datetime(df['test_date'])
+df['test_date'] = df['test_date'].dt.to_period('M')
 
-test_df.to_csv(pathprefix + 'data/' + outfile_prefix + 'test.csv', index=False)
-train_df.to_csv(pathprefix + 'data/' + outfile_prefix + 'train.csv', index=False)
-val_df.to_csv(pathprefix + 'data/' + outfile_prefix + 'val.csv', index=False)
+for month in df.test_date.unique():
+    outfile_prefix = f'preprocessed_{month}_'
+
+    train_df, test_df = train_test_split(df[df['test_date'] == month], test_size=0.2, random_state=123)
+    train_df, val_df = train_test_split(train_df, test_size=0.2, random_state=123)
+
+    # remove date
+    test_df = test_df.drop(['test_date'], axis=1).astype(float)
+    train_df = train_df.drop(['test_date'], axis=1).astype(float)
+    val_df = val_df.drop(['test_date'], axis=1).astype(float)
+
+    test_df.to_csv(pathprefix + 'data/months/' + outfile_prefix + 'test.csv', index=False)
+    train_df.to_csv(pathprefix + 'data/months/' + outfile_prefix + 'train.csv', index=False)
+    val_df.to_csv(pathprefix + 'data/months/' + outfile_prefix + 'val.csv', index=False)
