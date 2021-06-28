@@ -11,8 +11,10 @@ Replicate dataset used in the paper
 
 # data: https://github.com/nshomron/covidpred/tree/master/data
 
+fileprefix = 'C:/Users/victo/Desktop/data/'
+
 # raw Data from GitHub:
-path = 'data/corona_tested_individuals_ver_006.english.csv'
+path = fileprefix + 'corona_tested_individuals_ver_006.english.csv'
 
 
 # read data
@@ -92,6 +94,6 @@ train_df, val_df = train_test_split(train_df, test_size=0.2)
 # Save data and category explanations
 filename = 'preprocessed_github_'
 
-train_df.to_csv('data/' + filename + 'train.csv', index=False)
-val_df.to_csv('data/' + filename + 'val.csv', index=False)
-test_df.to_csv('data/' + filename + 'test.csv', index=False)
+train_df.to_csv(fileprefix + filename + 'train.csv', index=False)
+val_df.to_csv(fileprefix + filename + 'val.csv', index=False)
+test_df.to_csv(fileprefix + filename + 'test.csv', index=False)

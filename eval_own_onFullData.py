@@ -26,7 +26,9 @@ def plotImp(model, X, num = 8, fig_size = (40, 8)):
 
 
 
-fileprefix = 'data/preprocessed_full_'
+# fileprefix = 'data/preprocessed_full_'
+fileprefix = 'C:/Users/victo/Desktop/data/preprocessed_full_'
+
 
 # load train and validation data
 train_pd = pd.read_csv(fileprefix + 'train.csv', sep=',')

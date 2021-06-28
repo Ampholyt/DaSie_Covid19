@@ -11,7 +11,8 @@ import shap  # package used to calculate shap values
 Evaluate the paper's model
 '''
 
-fileprefix = 'data/preprocessed_github_'
+fileprefix = 'C:/Users/victo/Desktop/data/preprocessed_github_'
+# fileprefix = 'data/preprocessed_github_'
 
 # load train and validation data
 train_pd = pd.read_csv(fileprefix + 'train.csv', sep=',')
@@ -80,23 +81,13 @@ plt.show()
 
 
 #######SHAP##############
+
 shaping = input("Do you want to calculate the shap values?")
 if (shaping == 'yes' or shaping == 'y'):
     # fix?
     bst.params["objective"] = "binary"
-    # Create object that can calculate shap values
-    explainer = shap.TreeExplainer(bst)
 
-    # Calculate Shap values
-    shap_values = explainer.shap_values(vX)
+    explainer = shap.TreeExplainer(bst, vX)
+    shap_values = explainer(vX)
 
-    # shap.initjs()
-    shap.summary_plot(shap_values, vX)
-
-    # # How to use this?
-    # shap.force_plot(explainer.expected_value[1], shap_values[1], vX)
-    #
-    # # use Kernel SHAP to explain test set predictions
-    # k_explainer = shap.KernelExplainer(my_model.predict_proba, train_X)
-    # k_shap_values = k_explainer.shap_values(vX)
-    # shap.force_plot(k_explainer.expected_value[1], k_shap_values[1], vX)
+    shap.plots.beeswarm(shap_values, order=shap_values.abs.mean(0))
