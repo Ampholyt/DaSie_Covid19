@@ -24,10 +24,8 @@ def plotImp(model, X, num = 8, fig_size = (40, 8)):
     plt.savefig('lgbm_importances-01.png')
     plt.show()
 
-
-
-# fileprefix = 'data/preprocessed_full_'
-fileprefix = 'C:/Users/victo/Desktop/data/preprocessed_full_'
+fileprefix = 'data/preprocessed_full_'
+# fileprefix = 'C:/Users/victo/Desktop/data/preprocessed_full_'
 
 
 # load train and validation data
@@ -44,27 +42,8 @@ test_X = test_pd.drop(labels="corona_result", axis=1)
 # print(test_X.dtypes)
 # print(valid_X.dtypes)
 
-# training:
-param_readin = {'feature_pre_filter': False} # why is this needed? (https://lightgbm.readthedocs.io/en/latest/Parameters.html search for feature_pre_filter)
-train_data = lgb.Dataset(train_X, label=train_pd['corona_result'])
-val_data = lgb.Dataset(valid_X, params=param_readin,  label=valid_pd['corona_result'], reference=train_data)
-# train model
-train_param = {'bagging_fraction': 0.9081128350776642,
-                'feature_fraction': 0.6757639514310116,
-                'learning_rate': 0.46164810494204905,
-                'max_bin': 88,
-                'max_depth': 28,
-                'min_data_in_leaf': 55,
-                'min_sum_hessian_in_leaf': 39.895374699362016,
-                'num_leaves': 34,
-                'subsample': 0.02567451763571079,
-                'objective': 'binary',
-                'metric': 'auc',
-                'is_unbalance': True,
-                'boost_from_average': False,
-                'verbose': -1}
-#num_boost_round=603
-bst = lgb.train(train_param, train_data, num_boost_round=604, early_stopping_rounds=50, valid_sets=[val_data])
+#load model
+bst = lgb.Booster(model_file = 'models/own_onFullData.txt')
 
 #predict
 ypred = bst.predict(test_X)
@@ -121,22 +100,11 @@ shaping = input("Do you want to calculate the shap values?")
 if (shaping == 'yes' or shaping == 'y'):
     # fix?
     bst.params["objective"] = "binary"
-    # Create object that can calculate shap values
-    explainer = shap.TreeExplainer(bst)
-    print(explainer.expected_value)
-    # Calculate Shap values
-    shap_values = explainer.shap_values(vX)
 
-    print(shap_values)
-    # shap.initjs()
-    print("summary plot: ")
-    shap.summary_plot(shap_values, vX)
+    explainer = shap.TreeExplainer(bst, vX)
+    shap_values = explainer(vX)
 
-    print("\nsummary plot for predicting class 1: ")
-    shap.summary_plot(shap_values[1], vX)
-
-    print("\nsummary plot for predicting class 0: ")
-    shap.summary_plot(shap_values[0], vX)
+    shap.plots.beeswarm(shap_values, order=shap_values.abs.max(0))
 
 
 

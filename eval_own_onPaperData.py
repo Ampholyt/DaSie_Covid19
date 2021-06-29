@@ -40,7 +40,7 @@ test_X = test_pd.drop(labels="corona_result", axis=1)
 # load model from file
 # todo import own model
 ################################################################################
-bst = lgb.Booster(model_file='models/lgbm_model_all_features.txt')
+bst = lgb.Booster(model_file='models/own_onFullData.txt')
 ################################################################################
 
 #predict

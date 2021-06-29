@@ -1,29 +1,41 @@
 import lightgbm as lgb
 # data: https://github.com/nshomron/covidpred/tree/master/data
 
-#training
-#param
-train_data = lgb.Dataset('train.bin').construct()
-validation_data = lgb.Dataset('validation.bin').construct()
-print("Rows of validation: ",validation_data.num_data(), "\nColumns of validation: ", validation_data.num_feature())
+fileprefix = 'data/preprocessed_full_'
+# fileprefix = 'C:/Users/victo/Desktop/data/preprocessed_full_'
 
-# param = {'num_leaves': 20, 'objective': 'binary',
-# 'min_data_in_leaf': 4,
-# 'feature_fraction': 0.2,
-# 'bagging_fraction': 0.8,
-# 'bagging_freq': 5,
-# 'learning_rate': 0.05,
-# 'verbose': 1}
-#
-# bst = lgb.train(param, train_data, num_boost_round=603, early_stopping_rounds=5, valid_sets=[validation_data])
-#
-#
-# #save model:
-# bst.save_model('model_round-603.txt')
 
-#To load a scipy.sparse.csr_matrix array into Dataset:
-# import scipy
-# csr = scipy.sparse.csr_matrix((train_data_1, (500, 2)))
-# train_data_2 = lgb.Dataset(csr)
-#
-# print(train_data_2)
+# load train and validation data
+train_pd = pd.read_csv(fileprefix + 'train.csv', sep=',')
+valid_pd = pd.read_csv(fileprefix + 'val.csv', sep=',')
+test_pd = pd.read_csv(fileprefix + 'test.csv', sep=',')
+
+train_X = train_pd.drop(labels="corona_result", axis=1)
+valid_X = valid_pd.drop(labels="corona_result", axis=1)
+test_X = test_pd.drop(labels="corona_result", axis=1)
+
+# training:
+param_readin = {'feature_pre_filter': False} # why is this needed? (https://lightgbm.readthedocs.io/en/latest/Parameters.html search for feature_pre_filter)
+train_data = lgb.Dataset(train_X, label=train_pd['corona_result'])
+val_data = lgb.Dataset(valid_X, params=param_readin,  label=valid_pd['corona_result'], reference=train_data)
+
+# train model
+train_param = {'bagging_fraction': 0.9081128350776642,
+                'feature_fraction': 0.6757639514310116,
+                'learning_rate': 0.46164810494204905,
+                'max_bin': 88,
+                'max_depth': 28,
+                'min_data_in_leaf': 55,
+                'min_sum_hessian_in_leaf': 39.895374699362016,
+                'num_leaves': 34,
+                'subsample': 0.02567451763571079,
+                'objective': 'binary',
+                'metric': 'auc',
+                'is_unbalance': True,
+                'boost_from_average': False,
+                'verbose': -1}
+#num_boost_round=603
+bst = lgb.train(train_param, train_data, num_boost_round=604, early_stopping_rounds=50, valid_sets=[val_data])
+
+# save one model
+bst.save_model('models/own_onFullData.txt')
