@@ -1,16 +1,14 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
-#import numpy as np
-#import seaborn as sn
-#import matplotlib.pyplot as plt
+
 
 '''
 Preprocess raw data from Israeli Ministry of Health
 Translated website: https://4ezcibkawkaklp6a2uxvwy2q6q-ac4c6men2g7xr2a-data-gov-il.translate.goog/dataset/covid-19
 '''
 
-pathprefix = ''
-# pathprefix = 'C:/Users/victo/Desktop/'
+# pathprefix = ''
+pathprefix = 'C:/Users/victo/Desktop/'
 
 path = pathprefix + 'data/corona_tested_individuals_ver_00152.csv'
 

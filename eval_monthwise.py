@@ -62,25 +62,29 @@ def model_evaluation(trained_model, test_X, test_target, onlyAUC=False, month="N
         #############SHAP###############
         trained_model.params["objective"] = "binary"
 
-        explainer = shap.TreeExplainer(trained_model, test_X)
+        explainer = shap.explainers.Exact(trained_model.predict, test_X)
         shap_values = explainer(test_X)
 
         plt.figure()
-        shap.plots.beeswarm(shap_values,show=False)
+        shap.plots.beeswarm(shap_values, show=False)
         plt.savefig("images/" + month + "_SHAP.png")
 
     return AUC
 
 
 def main():
+    prefix = "C:/Users/victo/Desktop/"
     months = []
     with open("data/months/month_list.txt", "r") as month_list:
         months = month_list.read().splitlines()
     print(months)
     auc_df = pd.DataFrame(np.nan, index=months, columns=months)
     for i in range(len(months)):
-        cur_model = lgb.Booster(model_file=f'models/mode_{months[i]}.txt')
-        fileprefix = f'data/months/preprocessed_{months[i]}_'
+        cur_model = lgb.Booster(model_file=f'C:/Users/victo/Google Drive/Uni/DataScience/python/DaSie_Covid19/models/mode_{months[i]}.txt')
+        # fileprefix = f'data/months/preprocessed_{months[i]}_'
+        fileprefix = f'{prefix}data/months/preprocessed_{months[i]}_'
+
+
         test_pd = pd.read_csv(fileprefix + 'test.csv', sep=',')
         test_X = test_pd.drop(labels="corona_result", axis=1)
         test_target = test_pd["corona_result"]
@@ -89,7 +93,9 @@ def main():
         auc_df.at[f'{months[i]}', f'{months[i]}'] = auc_i
         for j in range(len(months)):
             if(j > i):
-                fileprefix = f'data/months/preprocessed_{months[j]}_'
+                # fileprefix = f'data/months/preprocessed_{months[j]}_'
+                fileprefix = f'{prefix}data/months/preprocessed_{months[j]}_'
+
                 test_pd = pd.read_csv(fileprefix + 'test.csv', sep=',')
                 test_X = test_pd.drop(labels="corona_result", axis=1)
                 test_target = test_pd["corona_result"]

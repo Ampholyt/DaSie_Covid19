@@ -1,18 +1,17 @@
 import lightgbm as lgb
-import numpy as np
-# data: https://github.com/nshomron/covidpred/tree/master/data
 import pandas as pd
-from matplotlib import pyplot as plt
-from sklearn.metrics import confusion_matrix
-from sklearn import metrics
 import shap  # package used to calculate shap values
+from matplotlib import pyplot as plt
+from sklearn import metrics
+
+# data: https://github.com/nshomron/covidpred/tree/master/data
 
 '''
 Evaluate the paper's model
 '''
 
-fileprefix = 'C:/Users/victo/Desktop/data/preprocessed_github_'
-# fileprefix = 'data/preprocessed_github_'
+# fileprefix = 'C:/Users/victo/Desktop/data/preprocessed_github_'
+fileprefix = 'data/preprocessed_github_'
 
 # load train and validation data
 train_pd = pd.read_csv(fileprefix + 'train.csv', sep=',')
@@ -90,4 +89,4 @@ if (shaping == 'yes' or shaping == 'y'):
     explainer = shap.TreeExplainer(bst, vX)
     shap_values = explainer(vX)
 
-    shap.plots.beeswarm(shap_values, order=shap_values.abs.mean(0))
+    shap.plots.beeswarm(shap_values)
