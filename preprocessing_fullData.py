@@ -9,10 +9,10 @@ Preprocess raw data from Israeli Ministry of Health
 Translated website: https://4ezcibkawkaklp6a2uxvwy2q6q-ac4c6men2g7xr2a-data-gov-il.translate.goog/dataset/covid-19
 '''
 
-# pathprefix = ''
-pathprefix = 'C:/Users/victo/Desktop/'
+pathprefix = ''
+# pathprefix = 'C:/Users/victo/Desktop/'
 
-path = pathprefix + 'data/corona_tested_individuals_ver_00151.csv'
+path = pathprefix + 'data/corona_tested_individuals_ver_00152.csv'
 
 # read data
 df = pd.read_csv(path, low_memory=False)
@@ -95,7 +95,12 @@ print(df['test_date'])
 df['test_date'] = pd.to_datetime(df['test_date'])
 df['test_date'] = df['test_date'].dt.to_period('M')
 
-for month in df.test_date.unique():
+month_list = list(df.test_date.unique())
+with open(pathprefix + "data/months/month_list.txt", "w") as outfile:
+    for month in month_list:
+        outfile.write(str(month) + "\n")
+
+for month in month_list:
     outfile_prefix = f'preprocessed_{month}_'
 
     train_df, test_df = train_test_split(df[df['test_date'] == month], test_size=0.2, random_state=123)
