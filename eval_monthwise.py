@@ -73,18 +73,19 @@ def model_evaluation(trained_model, test_X, test_target, onlyAUC=False, month="N
 
 
 def main():
-    prefix = "C:/Users/victo/Desktop/"
+    # prefix = "C:/Users/victo/Desktop/"
+    # iwas_prefix = "C:/Users/victo/Google Drive/Uni/DataScience/python/DaSie_Covid19/"
+    iwas_prefix = ""
+    prefix = ""
     months = []
     with open("data/months/month_list.txt", "r") as month_list:
         months = month_list.read().splitlines()
-    print(months)
+        months.reverse()
     auc_df = pd.DataFrame(np.nan, index=months, columns=months)
     for i in range(len(months)):
-        cur_model = lgb.Booster(model_file=f'C:/Users/victo/Google Drive/Uni/DataScience/python/DaSie_Covid19/models/mode_{months[i]}.txt')
+        cur_model = lgb.Booster(model_file=iwas_prefix + f'models/mode_{months[i]}.txt')
         # fileprefix = f'data/months/preprocessed_{months[i]}_'
         fileprefix = f'{prefix}data/months/preprocessed_{months[i]}_'
-
-
         test_pd = pd.read_csv(fileprefix + 'test.csv', sep=',')
         test_X = test_pd.drop(labels="corona_result", axis=1)
         test_target = test_pd["corona_result"]
@@ -95,14 +96,13 @@ def main():
             if(j > i):
                 # fileprefix = f'data/months/preprocessed_{months[j]}_'
                 fileprefix = f'{prefix}data/months/preprocessed_{months[j]}_'
-
                 test_pd = pd.read_csv(fileprefix + 'test.csv', sep=',')
                 test_X = test_pd.drop(labels="corona_result", axis=1)
                 test_target = test_pd["corona_result"]
                 print("im j Bereich: ", i, " - ",  j)
                 auc_df.at[f'{months[i]}', f'{months[j]}'] = model_evaluation(cur_model, test_X, test_target, True) # only auc
-    plt.figure()
-    sb.heatmap(auc_df.where(auc_df > 0.5), annot=True) #heatmap
-    plt.show()
+    # plt.figure()
+    # sb.heatmap(auc_df.where(auc_df > 0.5), annot=True) #heatmap
+    # plt.show()
 if __name__ == "__main__":
     main()
