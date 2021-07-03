@@ -73,10 +73,10 @@ def model_evaluation(trained_model, test_X, test_target, onlyAUC=False, month="N
 
 
 def main():
-    # prefix = "C:/Users/victo/Desktop/"
-    # iwas_prefix = "C:/Users/victo/Google Drive/Uni/DataScience/python/DaSie_Covid19/"
-    iwas_prefix = ""
-    prefix = ""
+    prefix = "C:/Users/victo/Desktop/"
+    iwas_prefix = "C:/Users/victo/Google Drive/Uni/DataScience/python/DaSie_Covid19/"
+    # iwas_prefix = ""
+    # prefix = ""
     months = []
     with open("data/months/month_list.txt", "r") as month_list:
         months = month_list.read().splitlines()
