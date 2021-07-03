@@ -40,7 +40,7 @@ def model_evaluation(trained_model, test_X, test_target, onlyAUC=False, month="N
         plt.ylim([0.0, 1.05])
         plt.xlabel('False Positive Rate')
         plt.ylabel('True Positive Rate')
-        plt.title('Receiver operating characteristic example')
+        plt.title('Receiver operating characteristic')
         plt.legend(loc="lower right")
         plt.savefig("images/" + month + "_ROC.png")
 
@@ -101,8 +101,8 @@ def main():
                 test_target = test_pd["corona_result"]
                 print("im j Bereich: ", i, " - ",  j)
                 auc_df.at[f'{months[i]}', f'{months[j]}'] = model_evaluation(cur_model, test_X, test_target, True) # only auc
-    # plt.figure()
-    # sb.heatmap(auc_df.where(auc_df > 0.5), annot=True) #heatmap
-    # plt.show()
+    plt.figure()
+    sb.heatmap(auc_df.where(auc_df > 0.5), annot=True) #heatmap
+    plt.savefig("images/heatmap_training(row)_testing(column).png")
 if __name__ == "__main__":
     main()

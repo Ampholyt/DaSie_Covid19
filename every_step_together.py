@@ -68,7 +68,7 @@ plt.xlim([0.0, 1.0])
 plt.ylim([0.0, 1.05])
 plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
-plt.title('Receiver operating characteristic example')
+plt.title('Receiver operating characteristic')
 plt.legend(loc="lower right")
 plt.show()
 
@@ -91,10 +91,10 @@ plt.show()
 import shap  # package used to calculate Shap values
 
 # Create object that can calculate shap values
-explainer = shap.TreeExplainer(bst)
+bst.params["objective"] = "binary"
 
-# Calculate Shap values
-shap_values = explainer.shap_values(vX)
+explainer = shap.explainers.Exact(bst.predict, test_X)
+shap_values = explainer(test_X)
 
 shap.initjs()
 shap.summary_plot(shap_values, vX)
@@ -105,4 +105,3 @@ shap.summary_plot(shap_values, vX)
 # k_explainer = shap.KernelExplainer(my_model.predict_proba, train_X)
 # k_shap_values = k_explainer.shap_values(vX)
 # shap.force_plot(k_explainer.expected_value[1], k_shap_values[1], vX)
-

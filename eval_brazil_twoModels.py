@@ -12,7 +12,7 @@ Evaluate the paper's (default) or a own model on the brazil's data
 '''
 
 dataPrefix = 'data/preprocessed_brazil_'
-dataModel = 'models/lgbm_model_all_features.txt'
+dataModel = 'models/mode_brazil_v1.txt'
 
 # load train and validation data
 train_pd = pd.read_csv(dataPrefix + 'train.csv', sep=',')
@@ -34,7 +34,7 @@ print(valid_pd)
 '''
 
 # load model:
-bst = lgb.Booster(model_file=dataModel)
+trained_model = lgb.Booster(model_file=dataModel)
 # OR
 # # train model:
 # param_readin = {'feature_pre_filter': False} # why is this needed? (https://lightgbm.readthedocs.io/en/latest/Parameters.html search for feature_pre_filter)
@@ -51,10 +51,10 @@ bst = lgb.Booster(model_file=dataModel)
 #                'verbose': 1,
 #     }
 #num_boost_round=603
-# bst = lgb.train(train_param, train_data, num_boost_round=604, early_stopping_rounds=5, valid_sets=[val_data])
+# trained_model = lgb.train(train_param, train_data, num_boost_round=604, early_stopping_rounds=5, valid_sets=[val_data])
 
 #predict
-ypred = bst.predict(test_X, predict_disable_shape_check=True)
+ypred = trained_model.predict(test_X, predict_disable_shape_check=True)
 print(ypred)
 print(max(ypred))
 print(min(ypred))
@@ -77,7 +77,7 @@ plt.xlim([0.0, 1.0])
 plt.ylim([0.0, 1.05])
 plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
-plt.title('Receiver operating characteristic example')
+plt.title('Receiver operating characteristic')
 plt.legend(loc="lower right")
 plt.show()
 
@@ -102,25 +102,17 @@ plt.show()
 
 
 #######SHAP##############
-# shap values are not possible with the paper's model
-#
-# shaping = input("Do you want to calculate the shap values?")
-# if (shaping == 'yes' or shaping == 'y'):
-#     # fix?
-#     bst.params["objective"] = "binary"
-#     # Create object that can calculate shap values
-#     explainer = shap.TreeExplainer(bst)
-#
-#     # Calculate Shap values
-#     shap_values = explainer.shap_values(vX)
-#
-#     # shap.initjs()
-#     shap.summary_plot(shap_values, vX)
-#
-#     # How to use this?
-#     shap.force_plot(explainer.expected_value[1], shap_values[1], vX)
-#
-#     # use Kernel SHAP to explain test set predictions
-#     k_explainer = shap.KernelExplainer(my_model.predict_proba, train_X)
-#     k_shap_values = k_explainer.shap_values(vX)
-#     shap.force_plot(k_explainer.expected_value[1], k_shap_values[1], vX)
+trained_model.params["objective"] = "binary"
+
+explainer = shap.explainers.Exact(trained_model.predict, test_X)
+shap_values = explainer(test_X)
+
+fig, ax = plt.subplots(figsize=(30, 10))
+shap.plots.beeswarm(shap_values, show=False)
+plt.savefig("images/brazil_SHAP.png")
+plt.show()
+
+fig, ax = plt.subplots(figsize=(30, 10))
+shap.plots.bar(shap_values)
+plt.savefig("images/brazil_SHAP_bar.png")
+plt.show()

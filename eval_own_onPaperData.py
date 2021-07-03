@@ -67,7 +67,7 @@ plt.xlim([0.0, 1.0])
 plt.ylim([0.0, 1.05])
 plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
-plt.title('Receiver operating characteristic example')
+plt.title('Receiver operating characteristic')
 plt.legend(loc="lower right")
 plt.show()
 
@@ -95,11 +95,10 @@ plt.show()
 
 shaping = input("Do you want to calculate the shap values?")
 if (shaping == 'yes' or shaping == 'y'):
-    # fix?
     bst.params["objective"] = "binary"
 
-    explainer = shap.TreeExplainer(bst, vX)
-    shap_values = explainer(vX)
+    explainer = shap.explainers.Exact(bst.predict, test_X)
+    shap_values = explainer(test_X)
 
     shap.plots.beeswarm(shap_values, order=shap_values.abs.max(0))
 

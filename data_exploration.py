@@ -68,7 +68,6 @@ dict_of_lists = {
 cols = ["Cough", "Fever", "Sore_throat", "Shortness_of_breath","Headache", "corona_result", "Age_60+", "Male", "Contact_with_confirmed"]
 for i in range(3,13):
     df_2020_temp = df_2020[df_2020["test_date"].apply(lambda x: int(x.split("-")[1]) == i)]
-
     for column in cols:
         print("Values for month: " + str(i))
         print(df_2020_temp[column].value_counts(), "\n")
