@@ -24,8 +24,8 @@ def plotImp(model, X, num = 8, fig_size = (40, 8)):
     plt.savefig('lgbm_importances-01.png')
     plt.show()
 
-fileprefix = 'data/preprocessed_full_'
-# fileprefix = 'C:/Users/victo/Desktop/data/preprocessed_full_'
+# fileprefix = 'data/preprocessed_full_'
+fileprefix = 'C:/Users/victo/Desktop/data/preprocessed_full_'
 
 
 # load train and validation data
@@ -103,7 +103,8 @@ if (shaping == 'yes' or shaping == 'y'):
     explainer = shap.explainers.Exact(bst.predict, test_X)
     shap_values = explainer(test_X)
 
-    shap.plots.beeswarm(shap_values, order=shap_values.abs.max(0))
+    shap.plots.beeswarm(shap_values)
+    shap.plots.bar(shap_values)
 
 
 

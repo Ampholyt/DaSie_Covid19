@@ -11,7 +11,8 @@ import shap  # package used to calculate shap values
 Evaluate the paper's (default) or a own model on the brazil's data
 '''
 
-dataPrefix = 'data/preprocessed_brazil_'
+# dataPrefix = 'data/preprocessed_brazil_'
+dataPrefix = 'C:/Users/victo/Desktop/data/preprocessed_brazil_'
 dataModel = 'models/mode_brazil_v1.txt'
 
 # load train and validation data
@@ -108,7 +109,7 @@ explainer = shap.explainers.Exact(trained_model.predict, test_X)
 shap_values = explainer(test_X)
 
 fig, ax = plt.subplots(figsize=(30, 10))
-shap.plots.beeswarm(shap_values, show=False)
+shap.plots.beeswarm(shap_values, show=False, plot_size=(20, 10))
 plt.savefig("images/brazil_SHAP.png")
 plt.show()
 

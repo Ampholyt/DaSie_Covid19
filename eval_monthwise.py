@@ -90,7 +90,7 @@ def main():
         test_X = test_pd.drop(labels="corona_result", axis=1)
         test_target = test_pd["corona_result"]
         print("im i Bereich: ", i)
-        auc_i = model_evaluation(cur_model, test_X, test_target, False, months[i]) # normal eval on same month (shap and so on)
+        auc_i = model_evaluation(cur_model, test_X, test_target, True, months[i]) # normal eval on same month (shap and so on)
         auc_df.at[f'{months[i]}', f'{months[i]}'] = auc_i
         for j in range(len(months)):
             if(j > i):
@@ -101,8 +101,28 @@ def main():
                 test_target = test_pd["corona_result"]
                 print("im j Bereich: ", i, " - ",  j)
                 auc_df.at[f'{months[i]}', f'{months[j]}'] = model_evaluation(cur_model, test_X, test_target, True) # only auc
+
     plt.figure()
-    sb.heatmap(auc_df.where(auc_df > 0.5), annot=True) #heatmap
-    plt.savefig("images/heatmap_training(row)_testing(column).png")
+    month_labels = ["MAR 20", "APR 20", "MAY 20", "JUN 20", "JUL 20", "AUG 20", "SEP 20", "OCT 20",
+                    "NOV 20", "DEC 20", "JAN 21", "FEB 21", "MAR 21", "APR 21", "MAY 21", "JUN 21"]
+
+    sb.heatmap(auc_df.where(auc_df > 0.5),
+               xticklabels=month_labels,
+               yticklabels=month_labels,
+               cmap="viridis",
+               annot=True) #heatmap
+
+    plt.xlabel("Testing data")
+    plt.ylabel("Model Training")
+    # plt.savefig("images/heatmap_training(row)_testing(column).png")
+    plt.show()
+
+
+
+
+
+
+
+
 if __name__ == "__main__":
     main()
